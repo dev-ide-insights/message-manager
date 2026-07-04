@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: flowpay-rabbitmq
+    ports:
+      - "5672:5672"   # Porta do protocolo AMQP
+      - "15672:15672" # Porta da interface web (L: guest / P: guest)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit_user
+      - RABBITMQ_DEFAULT_PASS=rabbit_password123
+
+  redis:
+    image: redis:7-alpine
+    container_name: flowpay-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      - REDIS_PASSWORD=redis_password123
+    command: >
+      redis-server 
+      --appendonly yes 
+      --requirepass ${REDIS_PASSWORD}
+
+volumes:
+  rabbitmq_data:
+  redis_data:
